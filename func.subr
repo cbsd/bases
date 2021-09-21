@@ -1,0 +1,28 @@
+myarch=$( uname -m )
+arch=
+target_arch=
+ver=
+path=
+
+while getopts "a:p:t:v:" opt; do
+	case "${opt}" in
+		a) arch="${OPTARG}" ;;
+		p) path="${OPTARG}" ;;
+		t) target_arch="${OPTARG}" ;;
+		v) ver="${OPTARG}" ;;
+	esac
+	shift $(($OPTIND - 1))
+done
+
+if [ -z "${ver}" ]; then
+	echo "empty ver: -v"
+	exit 1
+fi
+if [ -z "${arch}" ]; then
+	echo "empty arch: -a"
+	exit 1
+fi
+if [ -z "${target_arch}" ]; then
+	echo "empty target_arch: -t"
+	exit 1
+fi
