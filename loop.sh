@@ -6,7 +6,31 @@ MYDIR=$( dirname `realpath $0` )
 
 set -e
 . ${MYDIR}/func.subr
+. ${MYDIR}/config.conf
 set +e
+
+jobname_conf="jobs-bases-${arch}-${target_arch}-${ver}.conf"
+
+fetch -o /tmp/loop.$$ ${SCHEDULER_URL}/${jobname_conf}
+ret=$?
+
+if [ ${ret} -ne 0 ]; then
+	echo "error: fetch -o /tmp/loop.$$ ${SCHEDULER_URL}/${jobname_conf}"
+	exit ${ret}
+fi
+
+build_per_week=
+
+. /tmp/loop.$$
+
+rm -f /tmp/loop.$$
+
+if [ -n "${build_per_week}" ]; then
+	echo "no build_per_week params in ${SCHEDULER_URL}/${jobname_conf}"
+	exit ${ret}
+fi
+
+echo "build_per_week settings: ${build_per_week}"
 
 ${MYDIR}/base.sh -v ${ver} -a ${arch} -t ${target_arch}
 ret=$?
