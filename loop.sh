@@ -23,9 +23,12 @@ build_per_week=
 
 . /tmp/loop.$$
 
+echo "conf file:"
+cat /tmp/loop.$$
+
 rm -f /tmp/loop.$$
 
-if [ -n "${build_per_week}" ]; then
+if [ -z "${build_per_week}" ]; then
 	echo "no build_per_week params in ${SCHEDULER_URL}/${jobname_conf}"
 	exit ${ret}
 fi
