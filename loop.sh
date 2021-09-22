@@ -25,12 +25,12 @@ loop() {
 #	build_per_week=
 	last_success_build_time=
 
-	. /tmp/loop.$$
+#	. /tmp/loop.$$
 
-	echo "conf file:"
-	cat /tmp/loop.$$
+#	echo "conf file:"
+#	cat /tmp/loop.$$
 
-	rm -f /tmp/loop.$$
+#	rm -f /tmp/loop.$$
 
 #	if [ -z "${build_per_week}" ]; then
 #		echo "no build_per_week params in ${SCHEDULER_URL}/${jobname_conf}"
@@ -59,6 +59,9 @@ loop() {
 	else
 		echo "no last_success_build_time, time to build"
 	fi
+
+	echo "COOL"
+	exit 0
 
 	${MYDIR}/base.sh -v ${ver} -a ${arch} -t ${target_arch}
 	ret=$?
