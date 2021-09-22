@@ -3,10 +3,12 @@ arch=
 target_arch=
 ver=
 path=
+lock=
 
-while getopts "a:p:t:v:" opt; do
+while getopts "a:l:p:t:v:" opt; do
 	case "${opt}" in
 		a) arch="${OPTARG}" ;;
+		l) lock="1" ;;
 		p) path="${OPTARG}" ;;
 		t) target_arch="${OPTARG}" ;;
 		v) ver="${OPTARG}" ;;
