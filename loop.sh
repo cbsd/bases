@@ -14,15 +14,15 @@ loop() {
 	jobname_conf="${jobname_file}.conf"
 	jobname_result="/var/db/${jobname_file}.result"
 
-	fetch -o /tmp/loop.$$ ${SCHEDULER_URL}/${jobname_conf}
-	ret=$?
+#	fetch -o /tmp/loop.$$ ${SCHEDULER_URL}/${jobname_conf}
+#	ret=$?
 
-	if [ ${ret} -ne 0 ]; then
-		echo "error: fetch -o /tmp/loop.$$ ${SCHEDULER_URL}/${jobname_conf}"
-		exit ${ret}
-	fi
+#	if [ ${ret} -ne 0 ]; then
+#		echo "error: fetch -o /tmp/loop.$$ ${SCHEDULER_URL}/${jobname_conf}"
+#		exit ${ret}
+#	fi
 
-	build_per_week=
+#	build_per_week=
 	last_success_build_time=
 
 	. /tmp/loop.$$
@@ -32,17 +32,17 @@ loop() {
 
 	rm -f /tmp/loop.$$
 
-	if [ -z "${build_per_week}" ]; then
-		echo "no build_per_week params in ${SCHEDULER_URL}/${jobname_conf}"
-		exit ${ret}
-	fi
+#	if [ -z "${build_per_week}" ]; then
+#		echo "no build_per_week params in ${SCHEDULER_URL}/${jobname_conf}"
+#		exit ${ret}
+#	fi
 
 	if [ -r ${jobname_result} ]; then
 		. ${jobname_result}
 	else
 		touch ${jobname_result}
 	fi
-	echo "build_per_week settings: ${build_per_week}"
+#	echo "build_per_week settings: ${build_per_week}"
 
 	st_time=$( /bin/date +%s )
 
