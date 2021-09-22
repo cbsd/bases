@@ -27,6 +27,7 @@ loop() {
 
 #	build_per_week=
 	last_success_build_time=
+	last_success_build_duration=0
 
 #	. /tmp/loop.$$
 
@@ -49,7 +50,7 @@ loop() {
 
 	st_time=$( /bin/date +%s )
 
-	if [ -n "${last_success_build_time}" ]; then
+	if [ -n "${last_success_build_time}" -a "${last_success_build_duration}" != "0" ]; then
 		# 1 week = 604800 seconds
 		build_time_week="604800"
 		build_deadline_time=$(( st_time - build_time_week ))
