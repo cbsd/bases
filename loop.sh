@@ -63,9 +63,6 @@ loop() {
 		echo "no last_success_build_time, time to build"
 	fi
 
-	echo "COOL"
-	exit 0
-
 	${MYDIR}/base.sh -v ${ver} -a ${arch} -t ${target_arch}
 	ret=$?
 
