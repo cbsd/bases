@@ -23,11 +23,13 @@ ssh_options="-oIdentityFile=${MYDIR}/.ssh/id_ed25519 -oStrictHostKeyChecking=no 
 ssh_string="ssh -q ${ssh_options} ${UPLOAD_SSH_USER}@${UPLOAD_SSH_HOST}"
 scp_string="scp ${ssh_options}"
 
+echo "$ssh_string"
+
 sshtest=$( timeout 30 /usr/bin/lockf -s -t0 /tmp/cbsd-upload-${ver}.lock ${ssh_string} date )
 ret=$?
 
 if [ ${ret} -ne 0 ]; then
-	echo "ssh failed"
+	echo "ssh failed: ${ssh_string}"
 	echo "${sshtest}"
 	exit ${ret}
 fi

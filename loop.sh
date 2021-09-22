@@ -26,6 +26,7 @@ fi
 
 log=$( mktemp )
 trap "rm -f ${log}" HUP INT ABRT BUS TERM EXIT
+echo "${MYDIR}/mkdistribution.sh -v ${ver} -a ${arch} -t ${target_arch} > ${log}"
 ${MYDIR}/mkdistribution.sh -v ${ver} -a ${arch} -t ${target_arch} > ${log} 2>&1
 ret=$?
 
@@ -39,6 +40,7 @@ dist_dir=$( grep . ${log} )
 rm -f ${log}
 trap "" HUP INT ABRT BUS TERM EXIT
 
+echo "${MYDIR}/upload.sh -v ${ver} -a ${arch} -t ${target_arch} -p ${dist_dir}"
 ${MYDIR}/upload.sh -v ${ver} -a ${arch} -t ${target_arch} -p ${dist_dir}
 if [ ${ret} -ne 0 ]; then
 	echo "error: ${MYDIR}/upload.sh -v ${ver} -a ${arch} -t ${target_arch} -p ${dist_dir}"
