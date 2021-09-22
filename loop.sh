@@ -14,6 +14,9 @@ loop() {
 	jobname_conf="${jobname_file}.conf"
 	jobname_result="/var/db/${jobname_file}.result"
 
+#	todo: get global.conf first
+#	then overwrite per-job
+
 #	fetch -o /tmp/loop.$$ ${SCHEDULER_URL}/${jobname_conf}
 #	ret=$?
 
