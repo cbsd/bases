@@ -17,9 +17,9 @@ if [ "${myarch}" != "${arch}" ]; then
 		echo "empty target_arch" >> ${log_file} 2>&1
 		exit 1
 	fi
-	cmd_string="cbsd world ver=${ver} arch=${arch} target_arch=${target_arch}"
+	cmd_string="cbsd world ver=${ver} arch=${arch} target_arch=${target_arch} qemu=0"
 else
-	cmd_string="cbsd world ver=${ver}"
+	cmd_string="cbsd world ver=${ver} qemu=0"
 fi
 
 ${cmd_string} >> ${log_file} 2>&1
