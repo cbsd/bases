@@ -3,14 +3,18 @@ MYDIR=$( dirname `realpath $0` )
 
 set -e
 . ${MYDIR}/func.subr
+. ${MYDIR}/config.conf
 set +e
 
 cmd_string=
 
+jobname_file="kernel-${arch}-${target_arch}-${ver}"
+log_file="${LOG_DIR}/${jobname_file}-${log_date}.log"
+
 if [ "${myarch}" != "${arch}" ]; then
-	echo "not native arch"
+	echo "not native arch: ${myarch}/${arch}" >> ${log_file} 2>&1
 	if [ -z "${target_arch}" ]; then
-		echo "empty target_arch"
+		echo "empty target_arch" >> ${log_file} 2>&1
 		exit 1
 	fi
 	cmd_string="cbsd kernel ver=${ver} arch=${arch} target_arch=${target_arch}"
@@ -18,7 +22,18 @@ else
 	cmd_string="cbsd kernel ver=${ver}"
 fi
 
-${cmd_string}
+if [ ! -r /usr/jails/src/src_${ver}/src/sys/${arch}/conf/GENERIC.CBSD ]; then
+	echo "no such /usr/jails/src/src_${ver}/src/sys/${arch}/conf/GENERIC.CBSD" >> ${log_file} 2>&1
+	if [ ! -r /usr/jails/etc/defaults/FreeBSD-kernel-GENERIC-${arch}-${ver} ]; then
+		echo "no such /usr/jails/etc/defaults/FreeBSD-kernel-GENERIC-${arch}-${ver}" >> ${log_file} 2>&1
+		exit 1
+	fi
+	echo "cp -a /usr/jails/etc/defaults/FreeBSD-kernel-GENERIC-${arch}-${ver} /usr/jails/src/src_${ver}/src/sys/${arch}/conf/GENERIC.CBSD" >> ${log_file} 2>&1
+	cp -a /usr/jails/etc/defaults/FreeBSD-kernel-GENERIC-${arch}-${ver} /usr/jails/src/src_${ver}/src/sys/${arch}/conf/GENERIC.CBSD
+	ls -la /usr/jails/src/src_${ver}/src/sys/${arch}/conf/GENERIC.CBSD >> ${log_file} 2>&1
+fi
+
+${cmd_string} >> ${log_file} 2>&1
 ret=$?
 
-exit $?
+exit ${ret}

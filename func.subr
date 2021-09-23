@@ -4,14 +4,17 @@ target_arch=
 ver=
 path=
 lock=
+log_file=
 
-while getopts "a:l:p:t:v:" opt; do
+while getopts "a:d:l:p:t:v:z:" opt; do
 	case "${opt}" in
 		a) arch="${OPTARG}" ;;
-		l) lock="1" ;;
+		d) log_date="${OPTARG}" ;;
+		l) log_file="${OPTARG}" ;;
 		p) path="${OPTARG}" ;;
 		t) target_arch="${OPTARG}" ;;
 		v) ver="${OPTARG}" ;;
+		z) lock=1 ;;
 	esac
 	shift $(($OPTIND - 1))
 done

@@ -10,7 +10,6 @@ set -e
 set +e
 
 loop() {
-	jobname_file="jobs-bases-${arch}-${target_arch}-${ver}"
 	jobname_conf="${jobname_file}.conf"
 	jobname_result="/var/db/${jobname_file}.result"
 
@@ -42,6 +41,7 @@ loop() {
 #	fi
 
 	if [ -r ${jobname_result} ]; then
+		echo "read last result: ${jobname_result}" >> ${log_file} 2>&1
 		. ${jobname_result}
 	else
 		touch ${jobname_result}
@@ -55,39 +55,39 @@ loop() {
 		build_time_week="604800"
 		build_deadline_time=$(( st_time - build_time_week ))
 		if [ ${last_success_build_time} -gt ${build_deadline_time} ]; then
-			echo "last_success_build_time still in deadline range: ${last_success_build_time} > ${build_deadline_time}"
+			echo "last_success_build_time still in deadline range: ${last_success_build_time} > ${build_deadline_time}" >> ${log_file}
 			exit 0
 		else
-			echo "deadline, time to build: ${last_success_build_time} < ${build_deadline_time}"
+			echo "deadline, time to build: ${last_success_build_time} < ${build_deadline_time}" >> ${log_file}
 		fi
 	else
-		echo "no last_success_build_time, time to build"
+		echo "no last_success_build_time, time to build" >> ${log_file}
 	fi
 
-	${MYDIR}/base.sh -v ${ver} -a ${arch} -t ${target_arch}
+	${MYDIR}/base.sh -v ${ver} -a ${arch} -t ${target_arch} -d ${log_date}
 	ret=$?
 
 	if [ ${ret} -ne 0 ]; then
-		echo "error: ${MYDIR}/base.sh -v ${ver} -a ${arch} -t ${target_arch}"
+		echo "error: ${MYDIR}/base.sh -v ${ver} -a ${arch} -t ${target_arch} -d ${log_date}" >> ${log_file}
 		exit ${ret}
 	fi
 
-	${MYDIR}/kernel.sh -v ${ver} -a ${arch} -t ${target_arch}
+	${MYDIR}/kernel.sh -v ${ver} -a ${arch} -t ${target_arch} -d ${log_date}
 	ret=$?
 
 	if [ ${ret} -ne 0 ]; then
-		echo "error: ${MYDIR}/kernel.sh -v ${ver} -a ${arch} -t ${target_arch}"
+		echo "error: ${MYDIR}/kernel.sh -v ${ver} -a ${arch} -t ${target_arch} -d ${log_date}" >> ${log_file}
 		exit ${ret}
 	fi
 
 	log=$( mktemp )
 	trap "rm -f ${log}" HUP INT ABRT BUS TERM EXIT
-	echo "${MYDIR}/mkdistribution.sh -v ${ver} -a ${arch} -t ${target_arch} > ${log}"
-	${MYDIR}/mkdistribution.sh -v ${ver} -a ${arch} -t ${target_arch} > ${log} 2>&1
+	echo "${MYDIR}/mkdistribution.sh -v ${ver} -a ${arch} -t ${target_arch} -d ${log_date} > ${log}" >> ${log_file}
+	${MYDIR}/mkdistribution.sh -v ${ver} -a ${arch} -t ${target_arch} -d ${log_date} > ${log} 2>&1
 	ret=$?
 
 	if [ ${ret} -ne 0 ]; then
-		echo "error: ${MYDIR}/mkdistribution.sh -v ${ver} -a ${arch} -t ${target_arch}"
+		echo "error: ${MYDIR}/mkdistribution.sh -v ${ver} -a ${arch} -t ${target_arch} -d ${log_date}" >> ${log_file}
 		cat ${log}
 		rm -f ${log}
 	fi
@@ -96,10 +96,11 @@ loop() {
 	rm -f ${log}
 	trap "" HUP INT ABRT BUS TERM EXIT
 
-	echo "${MYDIR}/upload.sh -v ${ver} -a ${arch} -t ${target_arch} -p ${dist_dir}"
-	${MYDIR}/upload.sh -v ${ver} -a ${arch} -t ${target_arch} -p ${dist_dir}
+	echo "${MYDIR}/upload.sh -v ${ver} -a ${arch} -t ${target_arch} -p ${dist_dir} -d ${log_date}" >> ${log_file}
+	${MYDIR}/upload.sh -v ${ver} -a ${arch} -t ${target_arch} -p ${dist_dir} -d ${log_date}
+	ret=$?
 	if [ ${ret} -ne 0 ]; then
-		echo "error: ${MYDIR}/upload.sh -v ${ver} -a ${arch} -t ${target_arch} -p ${dist_dir}"
+		echo "error: ${MYDIR}/upload.sh -v ${ver} -a ${arch} -t ${target_arch} -p ${dist_dir} -d ${log_date}" >> ${log_file}
 		exit ${ret}
 	fi
 
@@ -108,17 +109,23 @@ loop() {
 
 	sysrc -qf ${jobname_result} last_success_build_time="${end_time}"
 	sysrc -qf ${jobname_result} last_success_build_duration="${diff_time}"
-
+	echo "loop done in ${diff_time}" >> ${log_file}
 	exit 0
 }
+
+jobname_file="loop-${arch}-${target_arch}-${ver}"
+log_file="${LOG_DIR}/${jobname_file}-${log_date}.log"
 
 if [ -n "${lock}" ]; then
 	loop
 	exit 0
 else
 	# recursive execite via lockf wrapper
-	echo "get lock:"
-	lockf -s -t10 ${GIANT_LOCK_FILE} ${MYDIR}/loop.sh -l lock -a ${arch} -t ${target_arch} -v ${ver}
+	[ ! -d "${LOG_DIR}" ] && mkdir -p ${LOG_DIR}
+	log_date=$( date "+%Y-%m-%d-%H-%M-%S" )
+	log_file="${LOG_DIR}/${jobname_file}-${log_date}.log"
+	echo "get lock: ${GIANT_LOCK_FILE}" >> ${log_file}
+	lockf -s -t10 ${GIANT_LOCK_FILE} ${MYDIR}/loop.sh -z lock -a ${arch} -t ${target_arch} -v ${ver} -d ${log_date}
 fi
 
 exit 0

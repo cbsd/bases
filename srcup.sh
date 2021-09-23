@@ -6,10 +6,15 @@ target_arch="noop"
 
 set -e
 . ${MYDIR}/func.subr
+. ${MYDIR}/config.conf
 set +e
 
 cmd_string="cbsd srcup ver=${ver}"
 
-${cmd_string}
+jobname_file="srcup-${arch}-${target_arch}-${ver}"
+log_file="${LOG_DIR}/${jobname_file}-${log_date}.log"
+
+${cmd_string} >> ${log_file} 2>&1
 ret=$?
-exit $?
+exit ${ret}
+
