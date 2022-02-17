@@ -25,4 +25,7 @@ fi
 ${cmd_string} >> ${log_file} 2>&1
 ret=$?
 
+# additional check&fetch patches
+/usr/local/bin/cbsd baseupdate ver=${ver} >> ${log_file} 2>&1
+
 exit ${ret}
