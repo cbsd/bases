@@ -6,6 +6,8 @@ set -e
 . ${MYDIR}/config.conf
 set +e
 
+[ ! -d ${LOG_DIR} ] && mkdir -p ${LOG_DIR}
+
 cmd_string=
 
 jobname_file="base-${arch}-${target_arch}-${ver}"

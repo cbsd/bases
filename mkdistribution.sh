@@ -9,6 +9,8 @@ set +e
 tempdir=$( mktemp -d )
 cmd_string=
 
+[ ! -d ${LOG_DIR} ] && mkdir -p ${LOG_DIR}
+
 jobname_file="mkdistribution-${arch}-${target_arch}-${ver}"
 log_file="${LOG_DIR}/${jobname_file}-${log_date}.log"
 

@@ -6,6 +6,8 @@ set -e
 . ${MYDIR}/config.conf
 set +e
 
+[ ! -d ${LOG_DIR} ] && mkdir -p ${LOG_DIR}
+
 jobname_file="upload-${arch}-${target_arch}-${ver}"
 log_file="${LOG_DIR}/${jobname_file}-${log_date}.log"
 

@@ -9,6 +9,8 @@ set -e
 . ${MYDIR}/config.conf
 set +e
 
+[ ! -d ${LOG_DIR} ] && mkdir -p ${LOG_DIR}
+
 cmd_string="cbsd srcup ver=${ver}"
 
 jobname_file="srcup-${arch}-${target_arch}-${ver}"

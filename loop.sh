@@ -9,6 +9,8 @@ set -e
 . ${MYDIR}/config.conf
 set +e
 
+[ ! -d ${LOG_DIR} ] && mkdir -p ${LOG_DIR}
+
 loop() {
 	jobname_conf="${jobname_file}.conf"
 	jobname_result="/var/db/${jobname_file}.result"
