@@ -39,8 +39,13 @@ if [ ${ret} -ne 0 ]; then
 	exit ${ret}
 fi
 
+# try to create dir first
 remote_dir="${UPLOAD_SSH_ROOT}${arch}/${target_arch}/${ver}/"
-sshtest=$( timeout 30 ${ssh_string} cd ${remote_dir} )
+sshtest=$( timeout 30 ${ssh_string} mkdir -p ${remote_dir} )
+
+# check dir
+remote_dir="${UPLOAD_SSH_ROOT}${arch}/${target_arch}/${ver}/"
+sshtest=$( timeout 30 ${ssh_string} mkdir -p ${remote_dir} )
 ret=$?
 
 if [ ${ret} -ne 0 ]; then
