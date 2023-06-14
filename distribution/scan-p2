@@ -1,0 +1,71 @@
+
+get_package_name()
+{
+	local _query _params _pkg i j _num
+
+	_query="${1}"
+
+	for i in ${full_packages}; do
+		eval _params="\$${i}"
+		for j in ${_params}; do
+			if [ "${j}" = "${_query}" ]; then
+				eval _pkg="\$${i}_name"
+				printf "${_pkg}"
+				return 0
+			fi
+		done
+	done
+}
+
+
+init()
+{
+	local _base=
+	_base="${1}"
+
+	[ -z "${_base}" ] && return 1
+	cd ${_base} || return 1 
+
+	for i in ${full_packages}; do
+		eval _params="\$${i}"
+		for j in ${_params}; do
+			eval _pkg="\$${i}_path"
+			for x in ${_pkg}; do
+				if [ ! -r "${_base}${x}" ]; then
+					echo "ln -s /bin/distribution ${_base}${x}"
+					ln -s /bin/distribution ${_base}${x}
+				fi
+			done
+		done
+	done
+}
+
+if [ -n "${1}" ]; then
+	query="${1}"
+else
+	query="${pgm}"
+fi
+
+case "${pgm}" in
+	init)
+		base="${2}"
+		init "${base}"
+		;;
+	distribution)
+		for i in ${full_packages}; do
+			eval _pkg="\$${i}_name"
+			printf "${_pkg}\n"
+		done
+		;;
+	*)
+		if pkg=$( get_package_name "${query}" 2>/dev/null ); then
+			if [ ${jailed} -eq 0 ]; then
+				printf "Command '${query}' not found, but can be installed with:\npkg install -y ${pkg}\n"
+			else
+				printf "Command '${query}' not found, but can be re-installed from CBSD host via:\ncbsd install-pkg-world packages=\"${pkg}\"\n"
+			fi
+		fi
+		;;
+esac
+
+exit 0

@@ -1,0 +1,5 @@
+#!/bin/sh
+pgm="${0##*/}"		# Program basename
+progdir="${0%/*}"	# Program directory
+
+jailed=$( /sbin/sysctl -qn security.jail.jailed )
