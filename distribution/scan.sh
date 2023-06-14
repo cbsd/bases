@@ -8,7 +8,7 @@ pkg_num=0
 
 DST="/tmp/distribution"
 [ -r ${DST} ] && rm -f ${DST}
-cat ${pgm}/scan-p1 > ${DST}
+cat /root/bases/distribution/scan-p1 > ${DST}
 
 sysrc -qf ${DST} full_packages=""
 
@@ -65,7 +65,7 @@ find ${REPO_DIR}/ -type f -name FreeBSD-\*.pkg -print | while read _file; do
 	rm -f ${DST}.tmp
 done
 
-cat ${pgm}/scan-p2 >> ${DST}
+cat /root/bases/distribution/scan-p2 >> ${DST}
 
 chmod +x ${DST}
 mv ${DST} ${REPO_DIR}/
