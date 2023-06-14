@@ -46,7 +46,7 @@ else
 	query="${pgm}"
 fi
 
-case "${pgm}" in
+case "${query}" in
 	init)
 		base="${2}"
 		init "${base}"
