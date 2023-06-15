@@ -59,6 +59,9 @@ case "${query}" in
 		;;
 	*)
 		if pkg=$( get_package_name "${query}" 2>/dev/null ); then
+			if [ -n "${DISTRUBUTION_LOG_NOTFOUND}" ]; then
+				echo "Not found: [${query}]" >> /tmp/not_found.log
+			fi
 			if [ ${jailed} -eq 0 ]; then
 				printf "Command '${query}' not found, but can be installed with:\npkg install -y ${pkg}\n"
 			else
