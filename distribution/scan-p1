@@ -1,5 +1,6 @@
 #!/bin/sh
 # Set DISTRUBUTION_LOG_NOTFOUND=1 to log 'not founded' command in /tmp/not_found.txt
+# Build: %%DATE%%
 pgm="${0##*/}"		# Program basename
 progdir="${0%/*}"	# Program directory
 

@@ -6,9 +6,10 @@ REPO_DIR="${1}"
 # /usr/obj/usr/jails/src/src_13.2/src/repo/FreeBSD:13:amd64/13.2"
 pkg_num=0
 
+DT=$( /bin/date "+%Y%m%d" )
 DST="/tmp/distribution"
 [ -r ${DST} ] && rm -f ${DST}
-cat /root/bases/distribution/scan-p1 > ${DST}
+sed -e "s:%%DATE%%:${DT}:g" /root/bases/distribution/scan-p1 > ${DST}
 
 sysrc -qf ${DST} full_packages=""
 
