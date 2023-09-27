@@ -41,7 +41,14 @@ init()
 }
 
 if [ -n "${1}" ]; then
-	query="${1}"
+	case "${1}" in
+		init|distribution)
+			query="${1}"
+			;;
+		*)
+			query="${pgm}"
+			;;
+	esac
 else
 	query="${pgm}"
 fi
