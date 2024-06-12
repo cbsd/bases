@@ -22,6 +22,8 @@ find ${REPO_DIR}/ -type f -name FreeBSD-\*.pkg -print | while read _file; do
 	echo ">> SCAN FOR ${NAME}.."
 
 	pkg info -l -F ${_file} | while read _path; do
+		# not executable
+		[ ! -x "${_path}" ] && continue
 		case "${_path}" in
 			/bin/*|/sbin/*|/usr/bin/*|/usr/sbin/*|/usr/libexec/*)
 				if [ -z "${tmp}" ]; then
