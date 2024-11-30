@@ -5,3 +5,13 @@ pgm="${0##*/}"		# Program basename
 progdir="${0%/*}"	# Program directory
 
 jailed=$( /sbin/sysctl -qn security.jail.jailed )
+
+if [ ${jailed} -eq 1 ]; then
+	# is RW?
+	touch /bin/distribution > /dev/null 2>&1
+	_ret=$?
+	if [ ${_ret} -eq 0 ]; then
+		# probably baserw=1/writable jail, reset jailed
+		jailed=0
+	fi
+fi
